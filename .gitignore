@@ -1,0 +1,28 @@
+# Visual Studio
+.vs/
+
+# Build folders
+bin/
+obj/
+
+# User files
+*.user
+*.suo
+
+# Rider
+.idea/
+
+# VS Code
+.vscode/
+
+# Logs
+*.log
+
+# NuGet
+packages/
+
+# Publish
+publish/
+
+# App settings locales (opcional)
+appsettings.Development.json
