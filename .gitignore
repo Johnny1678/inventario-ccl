@@ -26,3 +26,24 @@ publish/
 
 # App settings locales (opcional)
 appsettings.Development.json
+
+
+
+# Angular
+
+node_modules/
+.angular/
+dist/
+tmp/
+out-tsc/
+bazel-out/
+
+coverage/
+.sass-cache/
+
+npm-debug.log
+yarn-error.log
+
+.history/
+
+*.tsbuildinfo
