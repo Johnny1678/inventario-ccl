@@ -13,34 +13,42 @@ export class LoginPageComponent {
   private authService = inject(AuthService);
   private router = inject(Router);
 
+  ngOnInit():void{
+    if(this.authService.isLoggedIn()){
+      this.router.navigate(['/inventario'])
+    }
+  }
   credentials :LoginRequest = {username : '', password: ''};
   loading = signal(false);
   errorMsg = signal('');
 
-  onSubmit(){
-    if(!this.credentials.username || !this.credentials.password){
-      this.errorMsg.set('Completa todo los campos');
-    }
 
-    this.loading.set(true);
-    this.errorMsg.set('');
 
-    this.authService.login(this.credentials)
-      .subscribe({
+    onSubmit() {
+
+      if (!this.credentials.username || !this.credentials.password) {
+        this.errorMsg.set('Completa todos los campos');
+        return;
+      }
+
+      this.loading.set(true);
+      this.errorMsg.set('');
+
+      this.authService.login(this.credentials)
+        .subscribe({
           next: () => {
             this.loading.set(false);
             this.router.navigate(['/inventario']);
           },
-          error : (err) => {
+          error: (err) => {
             this.loading.set(false);
+
             this.errorMsg.set(
-              err.status === 401 ? "Usuario o Contraseña incorrectos": "Errror al conectar con el servidor"
-            )
-
+              err.status === 401
+                ? 'Usuario o contraseña incorrectos'
+                : 'Error al conectar con el servidor'
+            );
           }
-      })
-
-    
-  }
-
+        });
+    } 
 }

@@ -1,1 +1,95 @@
-<h1>login iniciando</h1>
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">📦 Inventario CCL</h2>
+    <button class="btn btn-outline-danger btn-sm" (click)="logout()">Cerrar sesión</button>
+  </div>
+
+  @if (errorMsg() && !modalAbierto()) {
+    <div class="alert alert-danger">{{ errorMsg() }}</div>
+  }
+
+  @if (loading()) {
+    <p class="text-muted">Cargando inventario...</p>
+  } @else {
+    <table class="table table-bordered table-hover align-middle">
+      <thead class="table-dark">
+        <tr>
+          <th>#</th>
+          <th>Producto</th>
+          <th class="text-center">Stock</th>
+          <th class="text-center">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (producto of productos(); track producto.id) {
+          <tr>
+            <td>{{ producto.id }}</td>
+            <td>{{ producto.nombre }}</td>
+            <td class="text-center">
+              <span class="badge" [class.bg-success]="producto.cantidad > 5"
+                                  [class.bg-warning]="producto.cantidad > 0 && producto.cantidad <= 5"
+                                  [class.bg-danger]="producto.cantidad === 0">
+                {{ producto.cantidad }}
+              </span>
+            </td>
+            <td class="text-center">
+              <button class="btn btn-primary btn-sm" (click)="abrirModal(producto)">
+                Movimiento
+              </button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+
+  @if (modalAbierto()) {
+    <div class="modal d-block" tabindex="-1" style="background: rgba(0,0,0,0.5);">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Registrar Movimiento</h5>
+            <button type="button" class="btn-close" (click)="cerrarModal()"></button>
+          </div>
+          <div class="modal-body">
+            <p class="text-muted mb-3">
+              Producto: <strong>{{ productoSeleccionado()?.nombre }}</strong>
+              — Stock actual: <strong>{{ productoSeleccionado()?.cantidad }}</strong>
+            </p>
+
+            @if (errorMsg()) {
+              <div class="alert alert-danger py-2">{{ errorMsg() }}</div>
+            }
+            @if (successMsg()) {
+              <div class="alert alert-success py-2">{{ successMsg() }}</div>
+            }
+
+            <div class="mb-3">
+              <label class="form-label">Tipo</label>
+              <select class="form-select" [(ngModel)]="movimiento.tipo" name="tipo">
+                <option value="Entrada">Entrada</option>
+                <option value="Salida">Salida</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Cantidad</label>
+              <input
+                type="number"
+                class="form-control"
+                [(ngModel)]="movimiento.cantidad"
+                name="cantidad"
+                min="1"
+              />
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" (click)="cerrarModal()">Cancelar</button>
+            <button class="btn btn-primary" (click)="registrarMovimiento()">Confirmar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
+</div>

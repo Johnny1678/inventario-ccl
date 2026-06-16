@@ -13,21 +13,26 @@ export class AuthService {
   private http = inject(HttpClient);
   private router = inject(Router);
 
-  private readonly TOKEN_KEY = 'ccl_token';
+private readonly TOKEN_KEY = 'ccl_token';
+private readonly EXPIRES_KEY = 'ccl_token_expiration';
 
   constructor() { }
 
- login(credentials: LoginRequest) {
-    return this.http.post<LoginResponse>(`${environment.API_URL}/auth/login`, credentials)
-    .pipe(
+  login(credentials: LoginRequest) {
+    return this.http.post<LoginResponse>(
+      `${environment.API_URL}/auth/login`,
+      credentials
+    ).pipe(
       tap(response => {
         localStorage.setItem(this.TOKEN_KEY, response.token);
+        localStorage.setItem(this.EXPIRES_KEY, response.expiresAt);
       })
     );
   }
 
-  logout(){
+  logout() {
     localStorage.removeItem(this.TOKEN_KEY);
+    localStorage.removeItem(this.EXPIRES_KEY);
     this.router.navigate(['/login']);
   }
 
@@ -35,7 +40,15 @@ export class AuthService {
     return localStorage.getItem(this.TOKEN_KEY);
   }
 
-  isLoggedIn(): boolean{
-    return !!this.getToken();
+  isLoggedIn(): boolean {
+
+    const token = localStorage.getItem(this.TOKEN_KEY);
+    const expiresAt = localStorage.getItem(this.EXPIRES_KEY);
+
+    if (!token || !expiresAt) {
+      return false;
+    }
+
+    return new Date(expiresAt) > new Date();
   }
 }
